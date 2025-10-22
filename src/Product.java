@@ -4,6 +4,13 @@ public class Product {
    private String productName;
    private int threshold;
    private int quantity;
+   public Product(String productId, String productName, int threshold, int quantity) {
+	    this.productId = productId;
+	    this.productName = productName;
+	    this.threshold = threshold;
+	    setQuantity(quantity); // reuse validation
+	}
+
    public String getProductId() {
 	return productId;
    }
@@ -26,7 +33,15 @@ public class Product {
 	return quantity;
    }
    public void setQuantity(int quantity) {
-	this.quantity = quantity;
+	   if(quantity < 0) {
+		   System.out.println("Quantity can not be negative");
+	   }
+	   else {
+		   this.quantity = quantity;
+	   }
+	
    }
-   
+   public String toString() {
+	   return "[ " + productId + ", " + productName + ", " + threshold + ", " + quantity + " ]";  
+   }
 }
