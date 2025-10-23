@@ -5,8 +5,11 @@ import java.util.ListIterator;
 import java.util.Scanner;
 
 public class WareHouse {
+	
+     
 	public static void main(String[] args) {
 		ArrayList<Product> l = new ArrayList<>();
+		StockObserver observer = new AlertService();
 
 		l.add(new Product("P101", "LAPTOP", 20, 50));
 		l.add(new Product("P102", "VIVO1PLUS", 30, 60));
@@ -23,10 +26,9 @@ public class WareHouse {
 		String id = null, name = null;
 		int quantity = 0, threshold = 0;
 		Scanner sc = new Scanner(System.in);
-		
 
 		while (true) {
-			System.out.println("");
+			System.out.println("-----WELCOME TO THE WAREHOUSE-----");
 			System.out.println("1.DISPLAY ITEMS");
 			System.out.println("2.SEARCH PRODUCT BY ID");
 			System.out.println("3.ADD NEW PRODUCT");
@@ -40,6 +42,7 @@ public class WareHouse {
 			switch (choice) {
 			case 1:
 				// DISPLAY
+				System.out.println("----- CURRENT INVENTORY -----");
 				itr = l.listIterator();
 
 				while (itr.hasNext()) {
@@ -69,74 +72,132 @@ public class WareHouse {
 				break;
 
 			case 3:
-				// add new product
-				System.out.println("Enter Product Id");
+				// Add new product
+				System.out.println("Enter Product Id:");
 				id = sc.next();
-				System.out.println("Enter Product name");
+				System.out.println("Enter Product Name:");
 				name = sc.next();
-				System.out.println("Enter product quantity");
+				System.out.println("Enter Product Quantity:");
 				quantity = sc.nextInt();
-				sc.nextLine();
-				System.out.println("Enter product threshold");
+				if (quantity < 0) {
+					System.out.println("Error: Quantity cannot be negative! Please enter a valid Quantity");
+					quantity = sc.nextInt();
+				}
+				System.out.println("Enter Product Threshold:");
 				threshold = sc.nextInt();
-				sc.nextLine();
-				boolean found1 = false;
 
+				boolean productExists = false;
 				itr = l.listIterator();
+
 				while (itr.hasNext()) {
 					p = itr.next();
 					if (p.getProductId().equals(id)) {
-						found1 = true;
-						int qty = p.getQuantity();
-						qty = qty + quantity;
-						p.setQuantity(qty);
-						System.out.println("Product already exist with Id: " + p.getProductId() + "and Name: " + p.getProductName());
+						productExists = true;
+						if (!p.getProductName().equalsIgnoreCase(name)) {
+							System.out.println("Error: Product ID already exists with a different name ("
+									+ p.getProductName() + ")");
+						} else {
+							int newQty = p.getQuantity() + quantity;
+							p.setQuantity(newQty); // new setter
+							System.out.println("Existing product found. Quantity updated for: " + p.getProductName());
+						}
 						break;
 					}
-
 				}
-				if (!found1) {
-					p = new Product(id, name, quantity, threshold);
-					l.add(p);
-					System.out.println("Product added successfully");
+
+				if (!productExists) {
+					Product newProduct = new Product(id, name, threshold, quantity);
+					l.add(newProduct);
+					System.out.println("Product added successfully.");
 				}
 				break;
 
 			case 4:
 				// receive shipment
-				
-				//either stock is finished or stocked limited the threshold
-				
-				
-				System.out.println("Enter the Product Id of the product you want to Order");
+
+				// either stock is finished or stocked limited the threshold
+
+				System.out.println("Enter the Product Id of the product you want to Add in Warehouse");
 				id = sc.next();
 				System.out.println("Enter the quantity of Product");
 				quantity = sc.nextInt();
+				if (quantity < 0) {
+					System.out.println("Quantity cannot be negative! Please enter a valid quantity.");
+					quantity = sc.nextInt();
+				}
 				sc.nextLine();
 				itr = l.listIterator();
 				boolean found2 = false;
-				while(itr.hasNext()) {
+				while (itr.hasNext()) {
 					p = itr.next();
-					if(p.getProductId().equals(id)) {
+					if (p.getProductId().equals(id)) {
 						found2 = true;
 						int qty = p.getQuantity();
-						qty = qty +  quantity;
+						qty = qty + quantity;
 						p.setQuantity(qty);
 						System.out.println("SHIPMENT RECEIVED SUCCESSFULLY");
-						
+
 						if (p.getQuantity() > p.getThreshold()) {
-			                System.out.println("Stock is now above threshold level (" + p.getThreshold() + ")");
-			            }
+							System.out.println("Stock is now above threshold level (" + p.getThreshold() + ")");
+						}
 						break;
 					}
 				}
-				if(!found2) {
-					System.out.println("Product not found for the Id :" + id );
+				if (!found2) {
+					System.out.println("Product not found for the Id :" + id);
 				}
 				break;
 
 			case 5:
 				// fulfill order
+
+				// step 1 - take Product Id and Quantity from user
+
+				System.out.println("Enter the Id of product you want to Order");
+				id = sc.next();
+				System.out.println("Enter the quantity of Product");
+				quantity = sc.nextInt();
+				if (quantity < 0) {
+					System.out.println("Quantity cannot be negative! Please enter a valid quantity.");
+					quantity = sc.nextInt();
+				}
+				sc.nextLine();
+
+				boolean productFound = false;
+
+				// step 2 - check if product exist
+
+				itr = l.listIterator();
+				while (itr.hasNext()) {
+					p = itr.next();
+
+					if (p.getProductId().equals(id)) {
+						productFound = true;
+
+						// check if product is on the stock
+						if (p.getQuantity() < quantity) {
+							System.out.println("Insufficient Stock available for " + p.getProductName());
+							break;
+						}
+
+						// Update the stock
+						else {
+							int qty = p.getQuantity();
+							qty = qty - quantity;
+							p.setQuantity(qty);
+							System.out.println("Fulfilled order : " + quantity + "units of " + p.getProductName()
+									+ "(Remaining : " + p.getQuantity() + ")");
+						}
+						if (p.getQuantity() < p.getThreshold()) {
+							observer.lowStock(p);
+						}
+						break;
+					}
+				}
+				if(!productFound) {
+					System.out.println("Product not found for the Id:" + id);
+				}
+				break;
 
 			case 6:
 				System.exit(0);
@@ -145,6 +206,7 @@ public class WareHouse {
 				System.out.println("Invalid choice");
 
 			}
+			System.out.println("================================================");
 		}
 	}
 }

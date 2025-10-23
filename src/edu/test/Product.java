@@ -33,13 +33,7 @@ public class Product {
 	return quantity;
    }
    public void setQuantity(int quantity) {
-	   if(quantity < 0) {
-		   System.out.println("Quantity can not be negative");
-	   }
-	   else {
-		   this.quantity = quantity;
-	   }
-	
+       this.quantity = quantity;
    }
    public String toString() {
        return "Product ID: " + productId +
