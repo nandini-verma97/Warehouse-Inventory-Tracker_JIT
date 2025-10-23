@@ -76,18 +76,6 @@ Low stock for Laptop – only 4 left!
 
 ---
 
-## 🏅 Evaluation (Self & Recruiter View)
-
-| Criteria | Rating (Out of 10) | Remarks |
-|----------|--------------------|----------|
-| Functionality | 10 | All required features implemented |
-| OOP Design | 8 | Could modularize logic into smaller service classes |
-| Code Clarity | 9 | Clean, readable, and consistent |
-| Design Patterns | 10 | Correct implementation of Observer |
-| Bonus Features | 6 | Can extend with file persistence/multithreading |
-| **Overall** | **9 / 10** | Impressive and interview-ready project! |
-
----
 
 ## 👩‍💻 Author
 
