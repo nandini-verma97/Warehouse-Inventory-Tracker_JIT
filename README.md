@@ -5,7 +5,7 @@ The **Warehouse Inventory Tracker** is a Java-based console application that man
 It allows users to **add products, receive shipments, fulfill orders**, and automatically triggers a **low-stock alert** when quantities drop below a defined threshold.  
 
 This project demonstrates strong **Object-Oriented Design (OOP)**, the **Observer Pattern**, and clean, modular Java code.
-
+This project was developed as part of my college assignment to demonstrate Java OOP and design patterns
 ---
 
 ## 🚀 Features
